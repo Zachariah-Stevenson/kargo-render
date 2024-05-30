@@ -27,7 +27,12 @@ func CombineYAML(manifests [][]byte) []byte {
 }
 
 func SplitYAML(manifest []byte) (map[string][]byte, error) {
-	manifests := bytes.Split(manifest, []byte("---\n"))
+	manifests_old := bytes.Split(manifest, []byte("\n---\n"))
+	var manifests [][]byte
+	for i := 0; i < len(manifests_old) - 1; i++ {
+		manifests = append(manifests, append(manifests_old[i], []byte("\n")...))
+	}
+	manifests = append(manifests, manifests_old[len(manifests_old) - 1])
 	manifestsByResourceTypeAndName := map[string][]byte{}
 	for _, manifest = range manifests {
 		resource := struct {
